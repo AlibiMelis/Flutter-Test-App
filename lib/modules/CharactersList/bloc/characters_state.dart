@@ -1,14 +1,24 @@
 part of 'characters_bloc.dart';
 
 @immutable
-abstract class CharactersState {}
+abstract class CharactersState extends Equatable {}
 
-class CharactersLoading extends CharactersState {}
+class CharactersLoadingState extends CharactersState {
+  @override
+  List<Object?> get props => [];
+}
 
-class CharactersLoaded extends CharactersState {
-  final CharactersRepo charactersRepo;
+class CharactersLoadedState extends CharactersState {
+  final bool hasReachedMax;
+  final CharactersInfo info;
+  final List<Character> characters;
 
-  CharactersLoaded({this.charactersRepo = const CharactersRepo()});
-  
+  CharactersLoadedState({
+    this.characters = const [],
+    this.info = const CharactersInfo(),
+    this.hasReachedMax = false,
+  });
 
+  @override
+  List<Object?> get props => [characters, hasReachedMax, info];
 }
