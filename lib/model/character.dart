@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:test_app/model/location.dart';
 part 'character.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Character {
   final int id;
   final String name;
@@ -32,5 +32,4 @@ class Character {
       this.created = ''});
   factory Character.fromJson(Map<String, dynamic> json) =>
       _$CharacterFromJson(json);
-  Map<String, dynamic> toJson() => _$CharacterToJson(this);
 }

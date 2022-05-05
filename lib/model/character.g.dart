@@ -27,18 +27,3 @@ Character _$CharacterFromJson(Map<String, dynamic> json) => Character(
       url: json['url'] as String? ?? '',
       created: json['created'] as String? ?? '',
     );
-
-Map<String, dynamic> _$CharacterToJson(Character instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'status': instance.status,
-      'species': instance.species,
-      'type': instance.type,
-      'gender': instance.gender,
-      'origin': instance.origin,
-      'location': instance.location,
-      'imageUrl': instance.imageUrl,
-      'episode': instance.episode,
-      'url': instance.url,
-      'created': instance.created,
-    };
