@@ -18,7 +18,7 @@ class Character {
   final String created;
 
   const Character(
-      {required this.id,
+      {this.id = 0,
       this.name = '',
       this.status = '',
       this.species = '',
