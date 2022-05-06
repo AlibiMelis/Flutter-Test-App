@@ -6,12 +6,16 @@ import 'package:test_app/modules/CharactersList/bloc/characters_bloc.dart';
 import 'package:test_app/modules/CharactersList/widgets/character_card.dart';
 
 class CharactersList extends StatelessWidget {
-  const CharactersList({Key? key}) : super(key: key);
+  CharactersList({Key? key}) : super(key: key);
+  final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Characters'),
+        elevation: 0,
+      ),
       body: BlocBuilder<CharactersBloc, CharactersState>(
         builder: (context, state) {
           if (state is CharactersLoadingState) {
@@ -19,46 +23,67 @@ class CharactersList extends StatelessWidget {
           }
           if (state is CharactersLoadedState) {
             final List<Character> characters = state.characters;
-            return ListView.separated(
-              padding: const EdgeInsets.all(12.0),
-              itemCount: characters.length + 1,
-              itemBuilder: (context, ind) {
-                if (ind == characters.length) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<CharactersBloc>(context).add(
-                        LoadMoreEvent(
-                          characters: characters,
-                          next: state.info.next,
-                          hasReachedMax: state.hasReachedMax,
-                        ),
-                      );
-                    },
-                    child: const Text('Load more'),
+            return NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollEndNotification &&
+                    _scrollController.position.extentAfter == 0) {
+                  BlocProvider.of<CharactersBloc>(context).add(
+                    LoadMoreEvent(
+                      characters: characters,
+                      next: state.info.next,
+                      hasReachedMax: state.hasReachedMax,
+                    ),
                   );
                 }
-                Character character = characters[ind];
-                return Hero(
-                  tag: character.image,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              CharacterDetails(character: character),
-                        ),
-                      );
-                    },
-                    child: CharacterCard(character: characters[ind]),
-                  ),
-                );
+                return false;
               },
-              separatorBuilder: (context, ind) {
-                return const SizedBox(height: 12.0);
-              },
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(8.0),
+                      itemCount: characters.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.70,
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                      ),
+                      itemBuilder: (context, ind) {
+                        Character character = characters[ind];
+                        return Hero(
+                          tag: character.image,
+                          child: CharacterCard(
+                            character: characters[ind],
+                            onClick: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      CharacterDetails(character: character),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    !state.hasReachedMax
+                        ? const CircularProgressIndicator()
+                        : Text('You have reached the end.',
+                            style: Theme.of(context).textTheme.subtitle1)
+                  ],
+                ),
+              ),
             );
           }
-          return Container();
+          return const Center(
+            child: Text('Oups, something went wrong!'),
+          );
         },
       ),
     );

@@ -18,16 +18,29 @@ class APIService {
     final json = await _makeRequest(url);
     final Map<String, dynamic> response = {};
     response['info'] = CharactersInfo.fromJson(json['info']);
-    response['characters'] = List<Character>.from((json['results'] as Iterable)
-        .map((e) => Character.fromJson(e)));
+    response['characters'] = List<Character>.from(
+        (json['results'] as Iterable).map((e) => Character.fromJson(e)));
     return response;
   }
 
   static Future<List<Episode>> getEpisodes(List<String> urls) async {
-    final String concatRequestUrl = _concatEpisodesUrl(urls);
-    Iterable json = await _makeRequest(concatRequestUrl);
-    List<Episode> episodes =
+    if (urls.isEmpty) throw APIRequestFailure();
+
+    final String url;
+    List<Episode> episodes = [];
+
+    if (urls.length > 1) {
+      url = _concatEpisodesUrl(urls);
+      final Iterable json = await _makeRequest(url);
+      episodes =
         List<Episode>.from(json.map((e) => Episode.fromJson(e)));
+    } else {
+      url = urls[0];
+      final json = await _makeRequest(url);
+      Episode e = Episode.fromJson(json);
+      episodes.add(e);
+    }
+    
     return episodes;
   }
 

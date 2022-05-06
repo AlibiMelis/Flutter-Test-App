@@ -11,7 +11,10 @@ class CharacterDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(character.name)),
+      appBar: AppBar(
+        title: Text(character.name),
+        elevation: 0,
+      ),
       body: Column(
         children: [
           CharacterProfile(
@@ -35,12 +38,17 @@ class CharacterDetails extends StatelessWidget {
               return Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.all(12.0),
-                  itemCount: episodes.length,
+                  itemCount: episodes.length + 1,
                   itemBuilder: (context, ind) {
-                    Episode e = episodes[ind];
+                    if (ind == 0) {
+                      return Text('Appeared in:',
+                          style: Theme.of(context).textTheme.headline1);
+                    }
+                    Episode e = episodes[ind - 1];
                     return Text('Episode ${e.episode}: ${e.name}');
                   },
                   separatorBuilder: (context, ind) {
+                    if (ind == 0) return const SizedBox(height: 12.0);
                     return const Divider();
                   },
                 ),

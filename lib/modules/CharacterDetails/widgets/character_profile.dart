@@ -17,8 +17,17 @@ class CharacterProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(12.0),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10.0,
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Hero(
@@ -39,14 +48,18 @@ class CharacterProfile extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Text(gender.name),
-                    const Text('gender'),
+                    Text(gender.name.toUpperCase(),
+                        style: Theme.of(context).textTheme.headline1),
+                    Text('gender',
+                        style: Theme.of(context).textTheme.subtitle1),
                   ],
                 ),
                 Column(
                   children: [
-                    Text(status.name),
-                    const Text('status'),
+                    Text(status.name.toUpperCase(),
+                        style: Theme.of(context).textTheme.headline1),
+                    Text('status',
+                        style: Theme.of(context).textTheme.subtitle1),
                   ],
                 )
               ],
